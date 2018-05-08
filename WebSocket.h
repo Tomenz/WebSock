@@ -117,7 +117,7 @@ public:
     } HOSTPARAM;
 
 public:
-    WebSocket(string strBindIp = "127.0.0.1", short sPort = 9090) : m_pSocket(nullptr), m_strBindIp(strBindIp), m_sPort(sPort)
+    WebSocket(const string& strBindIp = string("127.0.0.1"), short sPort = 9090) : m_pSocket(nullptr), m_strBindIp(strBindIp), m_sPort(sPort)
     {
     }
     WebSocket(const WebSocket&) = delete;
@@ -147,7 +147,7 @@ public:
     bool Start()
     {
         m_pSocket = new TcpServer();
-        m_pSocket->BindNewConnection(bind(&WebSocket::OnNewConnection, this, _1));
+        m_pSocket->BindNewConnection(function<void(const vector<TcpSocket*>&)>(bind(&WebSocket::OnNewConnection, this, _1)));
         m_pSocket->BindErrorFunction(bind(&WebSocket::OnSocketError, this, _1));
         return m_pSocket->Start(m_strBindIp.c_str(), m_sPort);
     }
