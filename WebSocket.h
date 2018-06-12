@@ -647,7 +647,7 @@ private:
                     sHeader->PLoad = iter->second.nLen;
 
                     *(reinterpret_cast<short*>(spOutput.get() + 2)) = htons(sCode);
-                    copy(szData, szData + iter->second.nLen, spOutput.get() + 4);
+                    copy(szData, szData + iter->second.nLen - 2, spOutput.get() + 4);
                     pTcpSocket->Write(spOutput.get(), iter->second.nLen + 2);
                 }
                 pTcpSocket->Close();
