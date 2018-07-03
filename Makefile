@@ -4,7 +4,7 @@
 CC = g++
 #CFLAGS = -ggdb -w -m32 -D _DEBUG -D ZLIB_CONST -pthread
 CFLAGS = -Wall -O3 -std=c++14 -pthread -ffunction-sections -fdata-sections -shared -fPIC
-LDFLAGS = -Wl,--gc-sections -lpthread -shared
+LDFLAGS = -Wl,--gc-sections -lpthread -shared -latomic
 TARGET = ../WebSocket.so
 INC_PATH = -I ..
 VPATH=..

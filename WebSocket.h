@@ -9,7 +9,7 @@
 #include <iomanip>
 
 #include "CommonLib/Base64.h"
-#include "socketlib/SSlSocket.h"
+#include "socketlib/SslSocket.h"
 #include "TempFile.h"
 #include "sha1.h"
 
