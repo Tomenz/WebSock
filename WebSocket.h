@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <queue>
 #include <algorithm>
+#include <functional>
 #include <regex>
 #include <fstream>
 #include <iomanip>
@@ -16,6 +17,7 @@
 using namespace std;
 using namespace std::placeholders;
 
+#if defined (_WIN32) || defined (_WIN64)
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib, "x64/Debug/socketlib")
@@ -28,6 +30,20 @@ using namespace std::placeholders;
 #else
 #pragma comment(lib, "Release/socketlib")
 #endif
+#endif
+#else
+#include <arpa/inet.h>
+#define ConvertToByte(x) wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(x)
+void OutputDebugString(const wchar_t* pOut)
+{   // mkfifo /tmp/dbgout
+    int fdPipe = open("/tmp/dbgout", O_WRONLY | O_NONBLOCK);
+    if (fdPipe >= 0)
+    {
+        wstring strTmp(pOut);
+        write(fdPipe, ConvertToByte(strTmp).c_str(), strTmp.size());
+        close(fdPipe);
+    }
+}
 #endif
 
 #define ntohll(x) ( ( (uint64_t)(ntohl( (uint32_t)((x << 32) >> 32) )) << 32) | ntohl(((uint32_t)(x >> 32))))

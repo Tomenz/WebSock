@@ -3,17 +3,18 @@
 #include <iostream>
 #include <signal.h>
 #include <codecvt>
+#include <fcntl.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <conio.h>
 #include <io.h>
-#include <fcntl.h>
 #else
 #include <syslog.h>
 #pragma message("TODO!!! Folge Zeile wieder entfernen.")
 #include <termios.h>
-#include <fcntl.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #endif
 
 #include "ConfFile.h"
@@ -25,8 +26,6 @@
 #include "Psapi.h"
 #pragma comment(lib, "Psapi.lib")
 
-const static wregex s_rxSepComma(L"\\s*,\\s*");
-
 void se_translator(size_t e, _EXCEPTION_POINTERS* p)
 {
     throw e;
@@ -35,11 +34,13 @@ void se_translator(size_t e, _EXCEPTION_POINTERS* p)
 class CBaseSrv
 {
 public:
-    explicit CBaseSrv(wchar_t*) {}
+    explicit CBaseSrv(const wchar_t*) {}
     virtual int Run(void) { Start(); return 0; }
     virtual void Start(void) = 0;
 };
 #endif
+
+const static wregex s_rxSepComma(L"\\s*,\\s*");
 
 class Service : public CBaseSrv
 {
