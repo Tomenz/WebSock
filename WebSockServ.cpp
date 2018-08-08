@@ -139,8 +139,8 @@ public:
         for (auto& WebSocket : m_vServers)
             WebSocket.Start();
 
-        while (m_bStop == false)
-            this_thread::sleep_for(chrono::milliseconds(100));
+        unique_lock<mutex> lock(m_mxStop);
+        m_cvStop.wait(lock, [&]() { return m_bStop; });
 
         // Server stoppen
         for (auto& WebSocket : m_vServers)
@@ -155,7 +155,13 @@ public:
 
         m_bIsStopped = true;
     };
-    virtual void Stop(void) { m_bStop = true; }
+
+    virtual void Stop(void)
+    {
+        m_bStop = true;
+        m_cvStop.notify_all();
+    }
+
     bool IsStopped(void) { return m_bIsStopped; }
 
     static void SignalHandler(int iSignal)
@@ -180,6 +186,8 @@ private:
     deque<WebSocket> m_vServers;
     bool m_bStop;
     bool m_bIsStopped;
+    mutex              m_mxStop;
+    condition_variable m_cvStop;
 };
 
 shared_ptr<Service> Service::s_pInstance = nullptr;
