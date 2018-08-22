@@ -97,6 +97,7 @@ class WebSocket
     {
         string strBuffer;
         vector<pair<string, string>> HeaderList;
+        bool bNew;
     } CONNECTIONDETAILS;
 
     typedef unordered_map<TcpSocket*, CONNECTIONDETAILS> CONNECTIONLIST;
@@ -233,7 +234,7 @@ private:
             m_mtxConnections.lock();
             for (auto& pSocket : vCache)
             {
-                m_vConnections.emplace(pSocket, CONNECTIONDETAILS({ string(), vector<pair<string, string>>() }));
+                m_vConnections.emplace(pSocket, CONNECTIONDETAILS({ string(), vector<pair<string, string>>(), true }));
                 pSocket->StartReceiving();
             }
             m_mtxConnections.unlock();
@@ -256,7 +257,18 @@ private:
 
         if (nRead > 0)
         {
-            if (spBuffer.get()[0] < 32) // SSl Client hello
+            bool bFirstCall = false;
+            m_mtxConnections.lock();
+            CONNECTIONLIST::iterator item = m_vConnections.find(pTcpSocket);
+            if (item != end(m_vConnections))
+            {
+                CONNECTIONDETAILS* pConDetails = &item->second;
+                bFirstCall = pConDetails->bNew;
+                pConDetails->bNew = false;
+            }
+            m_mtxConnections.unlock();
+
+            if (spBuffer.get()[0] < 32 && bFirstCall == true) // 1. Byte < Ascii(32) && das erste mal aufgerufen wir gehen von einem SSl Client hello aus
             {
                 pTcpSocket->PutBackRead(spBuffer.get(), nRead);
 
@@ -274,15 +286,12 @@ private:
                 m_mtxConnections.unlock();
                 pTcpSocket->SelfDestroy();
 
-                function<void(TcpSocket*)> fnBytesRecived = pSslTcpSocket->TcpSocket::BindFuncBytesRecived(nullptr);
-                pSslTcpSocket->TcpSocket::BindFuncBytesRecived(fnBytesRecived);
-                fnBytesRecived(pSslTcpSocket);
                 pSslTcpSocket->StartReceiving();
                 return;
             }
 
             m_mtxConnections.lock();
-            CONNECTIONLIST::iterator item = m_vConnections.find(pTcpSocket);
+            item = m_vConnections.find(pTcpSocket);
             if (item != end(m_vConnections))
             {
                 CONNECTIONDETAILS* pConDetails = &item->second;
