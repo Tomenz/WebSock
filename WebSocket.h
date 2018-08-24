@@ -33,17 +33,18 @@ using namespace std::placeholders;
 #endif
 #else
 #include <arpa/inet.h>
+#include <fcntl.h>
 #define ConvertToByte(x) wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(x)
-void OutputDebugString(const wchar_t* pOut)
-{   // mkfifo /tmp/dbgout
-    int fdPipe = open("/tmp/dbgout", O_WRONLY | O_NONBLOCK);
-    if (fdPipe >= 0)
-    {
-        wstring strTmp(pOut);
-        write(fdPipe, ConvertToByte(strTmp).c_str(), strTmp.size());
-        close(fdPipe);
-    }
-}
+extern void OutputDebugString(const wchar_t* pOut);
+// {   // mkfifo /tmp/dbgout
+    // int fdPipe = open("/tmp/dbgout", O_WRONLY | O_NONBLOCK);
+    // if (fdPipe >= 0)
+    // {
+        // wstring strTmp(pOut);
+        // write(fdPipe, ConvertToByte(strTmp).c_str(), strTmp.size());
+        // close(fdPipe);
+    // }
+// }
 #endif
 
 #define ntohll(x) ( ( (uint64_t)(ntohl( (uint32_t)((x << 32) >> 32) )) << 32) | ntohl(((uint32_t)(x >> 32))))
@@ -131,6 +132,7 @@ public:
         string  m_strHostCertificate;
         string  m_strHostKey;
         string  m_strDhParam;
+        string  m_strSslCipher;
     } HOSTPARAM;
 
 public:
@@ -270,21 +272,24 @@ private:
 
             if (spBuffer.get()[0] < 32 && bFirstCall == true) // 1. Byte < Ascii(32) && das erste mal aufgerufen wir gehen von einem SSl Client hello aus
             {
-                pTcpSocket->PutBackRead(spBuffer.get(), nRead);
-
                 SslTcpSocket* pSslTcpSocket = new SslTcpSocket(pTcpSocket);
                 for (const auto& itParam : m_vHostParam)
                 {
                     if (itParam.second.m_strCAcertificate.empty() == false && itParam.second.m_strHostCertificate.empty() == false && itParam.second.m_strHostKey.empty() == false)
                         pSslTcpSocket->AddServerCertificat(itParam.second.m_strCAcertificate.c_str(), itParam.second.m_strHostCertificate.c_str(), itParam.second.m_strHostKey.c_str(), itParam.second.m_strDhParam.c_str());
+                    if (itParam.second.m_strSslCipher.empty() == false)
+                        pSslTcpSocket->SetCipher(itParam.second.m_strSslCipher.c_str());
                 }
-                pSslTcpSocket->SetAcceptState();
+
+                pSslTcpSocket->PutBackRead(spBuffer.get(), nRead);
 
                 m_mtxConnections.lock();
                 m_vConnections.emplace(pSslTcpSocket, m_vConnections.find(pTcpSocket)->second);
                 m_vConnections.erase(pTcpSocket);
                 m_mtxConnections.unlock();
                 pTcpSocket->SelfDestroy();
+
+                pSslTcpSocket->SetAcceptState();
 
                 pSslTcpSocket->StartReceiving();
                 return;
@@ -464,12 +469,7 @@ private:
         auto item = m_vConnections.find(reinterpret_cast<TcpSocket* const>(pBaseSocket));
         if (item != end(m_vConnections))
         {
-            if (item != end(m_vConnections))
-            {
-                m_vConnections.erase(item->first);
-            }
-            else
-                OutputDebugString(L"Socket nicht in ConectionList (3)\r\n");
+            m_vConnections.erase(item->first);
         }
         else
             OutputDebugString(L"Socket nicht in ConectionList (4)\r\n");

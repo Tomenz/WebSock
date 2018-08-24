@@ -120,6 +120,8 @@ public:
                         HostParam.m_strHostCertificate = strValue;
                     else if (strItem == L"CaBundle")
                         HostParam.m_strCAcertificate = strValue;
+                    else if (strItem == L"SSLCipher")
+                        HostParam.m_strSslCipher = strValue;
                     else if (strItem == L"VirtualHost")
                     {
                         const wstring& strValue = conf.getUnique(strSektion, strItem);
