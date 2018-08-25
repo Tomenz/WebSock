@@ -111,8 +111,13 @@ public:
                 vector<wstring>&& vListen = conf.get(strSektion);
                 for (const wstring& strItem : vListen)
                 {
-                    const string strValue = wstring_convert<codecvt_utf8<wchar_t>, wchar_t>().to_bytes(conf.getUnique(strSektion, strItem));
-                    if (strItem == L"SSL_DH_ParaFile")
+                    string strValue = wstring_convert<codecvt_utf8<wchar_t>, wchar_t>().to_bytes(conf.getUnique(strSektion, strItem));
+                    if (strItem == L"SSL")
+                    {
+                        transform(begin(strValue), end(strValue), begin(strValue), ::toupper);
+                        HostParam.m_bSSL = strValue == "TRUE" ? true : false;
+                    }
+                    else if (strItem == L"SSL_DH_ParaFile")
                         HostParam.m_strDhParam = strValue;
                     else if (strItem == L"KeyFile")
                         HostParam.m_strHostKey = strValue;
