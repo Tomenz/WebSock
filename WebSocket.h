@@ -170,12 +170,15 @@ public:
         if (m_vHostParam[strParamBlock].m_bSSL == true)
         {
             SslTcpServer* pSocket = new SslTcpServer();
-            pSocket->BindNewConnection(function<void(const vector<TcpSocket*>&)>(bind(&WebSocket::OnNewConnection, this, _1)));
 
             if (m_vHostParam[strParamBlock].m_strCAcertificate.empty() == false && m_vHostParam[strParamBlock].m_strHostCertificate.empty() == false && m_vHostParam[strParamBlock].m_strHostKey.empty() == false && m_vHostParam[strParamBlock].m_strDhParam.empty() == false)
             {
-                pSocket->AddCertificat(m_vHostParam[strParamBlock].m_strCAcertificate.c_str(), m_vHostParam[strParamBlock].m_strHostCertificate.c_str(), m_vHostParam[strParamBlock].m_strHostKey.c_str());
-                pSocket->SetDHParameter(m_vHostParam[strParamBlock].m_strDhParam.c_str());
+                if (pSocket->AddCertificat(m_vHostParam[strParamBlock].m_strCAcertificate.c_str(), m_vHostParam[strParamBlock].m_strHostCertificate.c_str(), m_vHostParam[strParamBlock].m_strHostKey.c_str()) == false
+                || pSocket->SetDHParameter(m_vHostParam[strParamBlock].m_strDhParam.c_str()) == false)
+                {
+                    delete pSocket;
+                    return false;
+                }
                 if (m_vHostParam[strParamBlock].m_strSslCipher.empty() == false)
                     pSocket->SetCipher(m_vHostParam[strParamBlock].m_strSslCipher.c_str());
             }
@@ -184,8 +187,12 @@ public:
             {
                 if (Item.first != "" && Item.first != strParamBlock && Item.second.m_bSSL == true)
                 {
-                    pSocket->AddCertificat(Item.second.m_strCAcertificate.c_str(), Item.second.m_strHostCertificate.c_str(), Item.second.m_strHostKey.c_str());
-                    pSocket->SetDHParameter(Item.second.m_strDhParam.c_str());
+                    if (pSocket->AddCertificat(Item.second.m_strCAcertificate.c_str(), Item.second.m_strHostCertificate.c_str(), Item.second.m_strHostKey.c_str()) == false
+                    || pSocket->SetDHParameter(Item.second.m_strDhParam.c_str()) == false)
+                    {
+                        delete pSocket;
+                        return false;
+                    }
                     if (Item.second.m_strSslCipher.empty() == false)
                         pSocket->SetCipher(Item.second.m_strSslCipher.c_str());
                 }
@@ -194,11 +201,10 @@ public:
             m_pSocket = pSocket;
         }
         else
-        {
             m_pSocket = new TcpServer();
-            m_pSocket->BindNewConnection(function<void(const vector<TcpSocket*>&)>(bind(&WebSocket::OnNewConnection, this, _1)));
-            m_pSocket->BindErrorFunction(bind(&WebSocket::OnSocketError, this, _1));
-        }
+
+        m_pSocket->BindNewConnection(function<void(const vector<TcpSocket*>&)>(bind(&WebSocket::OnNewConnection, this, _1)));
+        m_pSocket->BindErrorFunction(bind(&WebSocket::OnSocketError, this, _1));
         return m_pSocket->Start(m_strBindIp.c_str(), m_sPort);
     }
 
