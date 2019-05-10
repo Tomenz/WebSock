@@ -10,7 +10,7 @@
 #include <iomanip>
 
 #include "CommonLib/Base64.h"
-#include "socketlib/SslSocket.h"
+#include "socketlib/SocketLib.h"
 #include "TempFile.h"
 #include "sha1.h"
 
@@ -18,6 +18,7 @@ using namespace std;
 using namespace std::placeholders;
 
 #if defined (_WIN32) || defined (_WIN64)
+#include <Ws2tcpip.h>
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib, "x64/Debug/socketlib64d")
@@ -145,7 +146,7 @@ public:
         *this = move(other);
     }
     WebSocket& operator=(const WebSocket&) = delete;
-    WebSocket& operator=(WebSocket&& other)
+    WebSocket& operator=(WebSocket&& other) noexcept
     {
         swap(m_pSocket, other.m_pSocket);
         other.m_pSocket = nullptr;
