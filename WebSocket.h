@@ -731,7 +731,7 @@ private:
                 }
 
                 pBuffer += nBlockSize + iOffset;
-                nRead -= nBlockSize + iOffset;
+                nRead -= static_cast<uint32_t>(nBlockSize + iOffset);
             } while (pBuffer < pBufferEnd);
 
             mxList.unlock();
