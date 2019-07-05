@@ -697,7 +697,9 @@ private:
 
                 case 8: // close
                 {
-                    short sCode = ntohs(*(reinterpret_cast<short*>(szData)));
+                    short sCode;
+                    if (iter->second.nLen >= 2)
+                        sCode = ntohs(*(reinterpret_cast<short*>(szData)));
                     szData += 2;
 
                     shared_ptr<uint8_t> spOutput(new uint8_t[iter->second.nLen + 2]);
@@ -709,8 +711,10 @@ private:
                     sHeader->Mask = 0;
                     sHeader->PLoad = iter->second.nLen;
 
-                    *(reinterpret_cast<short*>(spOutput.get() + 2)) = htons(sCode);
-                    copy(szData, szData + iter->second.nLen - 2, spOutput.get() + 4);
+                    if (iter->second.nLen >= 2)
+                        *(reinterpret_cast<short*>(spOutput.get() + 2)) = htons(sCode);
+                    if (iter->second.nLen > 2)
+                        copy(szData, szData + iter->second.nLen - 2, spOutput.get() + 4);
                     pTcpSocket->Write(spOutput.get(), iter->second.nLen + 2);
                 }
                 pTcpSocket->Close();
