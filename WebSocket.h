@@ -122,7 +122,7 @@ class WebSocket
         uint64_t nLen;
         uint32_t uiMask;
         shared_ptr<TempFile> pTmpFile;
-        uint64_t nRecived;
+        uint64_t nReceived;
         wstring strPath;
     }SOCKETPARAM;
 
@@ -262,7 +262,7 @@ private:
         {
             if (pSocket != nullptr)
             {
-                pSocket->BindFuncBytesRecived(bind(&WebSocket::OnDataRecieved, this, _1));
+                pSocket->BindFuncBytesReceived(bind(&WebSocket::OnDataRecieved, this, _1));
                 pSocket->BindErrorFunction(bind(&WebSocket::OnSocketError, this, _1));
                 pSocket->BindCloseFunction(bind(&WebSocket::OnSocketCloseing, this, _1));
 
@@ -427,7 +427,7 @@ private:
                             if (find_if(begin(pConDetails->HeaderList), end(pConDetails->HeaderList), [&](auto pr) { return (pr.first == "sec-websocket-key") ? strWebSockKey = pr.second, true : false;  }) != end(pConDetails->HeaderList))
                             {
                                 SOCKETPARAM sp{ 0 };
-                                pTcpSocket->BindFuncBytesRecived(bind(&WebSocket::OnDataRecievedWebSocket, this, _1));
+                                pTcpSocket->BindFuncBytesReceived(bind(&WebSocket::OnDataRecievedWebSocket, this, _1));
                                 pTcpSocket->BindErrorFunction(bind(&WebSocket::OnSocketErrorWebSocket, this, _1));
                                 pTcpSocket->BindCloseFunction(bind(&WebSocket::OnSocketCloseingWebSocket, this, _1));
                                 auto itPath = find_if(begin(pConDetails->HeaderList), end(pConDetails->HeaderList), [&](auto pr) { return (pr.first == ":path") ? true : false;  });
@@ -560,7 +560,7 @@ private:
                 }
 
                 uint8_t* szData = pBuffer + iOffset;
-                size_t nBlockSize = min(static_cast<size_t>(iter->second.nLen - iter->second.nRecived), nRead - iOffset);
+                size_t nBlockSize = min(static_cast<size_t>(iter->second.nLen - iter->second.nReceived), nRead - iOffset);
 #if defined(_WIN32) || defined(_WIN64)
                 OutputDebugString(wstring(L"Read:" + to_wstring(nRead) + L", OpCode:" + to_wstring(iter->second.stHeader.OpCode) + L", FIN:" + to_wstring(iter->second.stHeader.FIN) + L", Len:" + to_wstring(iter->second.nLen) + L", BlockSize:" + to_wstring(nBlockSize) + L"\r\n").c_str());
 #endif
@@ -573,7 +573,7 @@ private:
                     }
                 }
 
-                iter->second.nRecived += nBlockSize;
+                iter->second.nReceived += nBlockSize;
 
                 switch (iter->second.stHeader.OpCode)
                 {
@@ -584,7 +584,7 @@ private:
                     if (iter->second.pTmpFile != 0)
                         iter->second.pTmpFile->Write(szData, nBlockSize);
 
-                    if (iter->second.nRecived == iter->second.nLen)
+                    if (iter->second.nReceived == iter->second.nLen)
                     {
                         if (iter->second.stHeader.FIN == 1)
                         {
@@ -596,13 +596,13 @@ private:
                         }
 
                         iter->second.stHeader = { 0 };
-                        iter->second.nRecived = iter->second.nLen = 0;
+                        iter->second.nReceived = iter->second.nLen = 0;
                     }
                     break;
 
                 case 1: // Text
                 {
-                    if (iter->second.nRecived == iter->second.nLen)
+                    if (iter->second.nReceived == iter->second.nLen)
                     {
                         if (iter->second.stHeader.FIN == 1)
                         {
@@ -665,7 +665,7 @@ private:
                         }
 
                         iter->second.stHeader = { 0 };
-                        iter->second.nRecived = iter->second.nLen = 0;
+                        iter->second.nReceived = iter->second.nLen = 0;
                     }
                 }
                 break;
@@ -682,7 +682,7 @@ private:
 
                     iter->second.pTmpFile->Write(szData, nBlockSize);
 
-                    if (iter->second.nRecived == iter->second.nLen)
+                    if (iter->second.nReceived == iter->second.nLen)
                     {
                         if (iter->second.stHeader.FIN == 1)
                         {
@@ -691,7 +691,7 @@ private:
                         }
 
                         iter->second.stHeader = { 0 };
-                        iter->second.nRecived = iter->second.nLen = 0;
+                        iter->second.nReceived = iter->second.nLen = 0;
                     }
                     break;
 
@@ -723,14 +723,14 @@ private:
                 case 9: // ping
                     reinterpret_cast<HEADER*>(pBuffer)->OpCode = 0xA;
                     pTcpSocket->Write(pBuffer, nRead);
-                    iter->second.nRecived = iter->second.nLen = 0;
+                    iter->second.nReceived = iter->second.nLen = 0;
                     break;
 
                 case 10:// pong
 #if defined(_WIN32) || defined(_WIN64)
                     OutputDebugString(L"pong frame\r\n");
 #endif
-                    iter->second.nRecived = iter->second.nLen = 0;
+                    iter->second.nReceived = iter->second.nLen = 0;
                     break;
                 }
 
