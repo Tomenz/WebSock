@@ -10,7 +10,7 @@
 #include <iomanip>
 
 #include "CommonLib/Base64.h"
-#include "socketlib/SocketLib.h"
+#include "SocketLib/SocketLib.h"
 #include "TempFile.h"
 #include "sha1.h"
 
