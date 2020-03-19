@@ -1,4 +1,4 @@
-// Http2Proxy.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
+// WebSocketServ.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
 //
 #include <iostream>
 #include <signal.h>
@@ -175,12 +175,14 @@ public:
     {
         signal(iSignal, Service::SignalHandler);
 
+        if (iSignal == SIGTERM)
+            Service::GetInstance().Stop();
 //        Service::GetInstance().ReadConfiguration();
 
 #if defined(_WIN32) || defined(_WIN64)
         OutputDebugString(L"STRG+C-Signal empfangen\r\n");
 #else
-        wcout << L"Signal SIGHUP empfangen\r\n";
+        OutputDebugString(L"Signal SIGHUP empfangen\r\n");
 #endif
     }
 
@@ -222,6 +224,7 @@ int main(int argc, const char* argv[])
 #else
 
     signal(SIGHUP, Service::SignalHandler);
+    signal(SIGTERM, Service::SignalHandler);
 
     auto _kbhit = []() -> int
     {
@@ -485,15 +488,8 @@ int main(int argc, const char* argv[])
 
         thread([&]()
         {
-            sigset_t sigset;
-            sigemptyset(&sigset);
-            sigaddset(&sigset, SIGTERM);
-            sigprocmask(SIG_BLOCK, &sigset, NULL);
-
-            int sig;
-            sigwait(&sigset, &sig);
-
-            Service::GetInstance().Stop();
+            while (Service::GetInstance().IsStopped() == false)
+                this_thread::sleep_for(chrono::milliseconds(100));
         }).detach();
 
 #endif
