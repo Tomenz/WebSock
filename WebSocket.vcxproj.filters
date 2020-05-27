@@ -24,16 +24,16 @@
     <ClInclude Include="WebSocket.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\SvrLib\BaseSvr.h">
-      <Filter>SrvLib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SvrLib\SvrCtrl.h">
-      <Filter>SrvLib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ConfFile.h">
+    <ClInclude Include="ConfFile.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\Trace.h">
+    <ClInclude Include="SvrLib\BaseSvr.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SvrLib\SvrCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Trace.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,22 +41,22 @@
     <ClCompile Include="sha1.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\TempFile.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="WebSockServ.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\SvrLib\BaseSvr.cpp">
-      <Filter>SrvLib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SvrLib\SvrCtrl.cpp">
-      <Filter>SrvLib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ConfFile.cpp">
+    <ClCompile Include="ConfFile.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\Trace.cpp">
+    <ClCompile Include="SvrLib\BaseSvr.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SvrLib\SvrCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TempFile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Trace.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

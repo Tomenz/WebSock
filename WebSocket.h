@@ -32,6 +32,8 @@ using namespace std::placeholders;
 #pragma comment(lib, "Release/socketlib32")
 #endif
 #endif
+#pragma comment(lib, "libcrypto.lib")
+#pragma comment(lib, "libssl.lib")
 #else
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -204,8 +206,8 @@ public:
         else
             m_pSocket = new TcpServer();
 
-        m_pSocket->BindNewConnection(function<void(const vector<TcpSocket*>&)>(bind(&WebSocket::OnNewConnection, this, _1)));
-        m_pSocket->BindErrorFunction(bind(&WebSocket::OnSocketError, this, _1));
+        m_pSocket->BindNewConnection(static_cast<function<void(const vector<TcpSocket*>&)>>(bind(&WebSocket::OnNewConnection, this, _1)));
+        m_pSocket->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&WebSocket::OnSocketError, this, _1)));
         return m_pSocket->Start(m_strBindIp.c_str(), m_sPort);
     }
 
@@ -262,9 +264,9 @@ private:
         {
             if (pSocket != nullptr)
             {
-                pSocket->BindFuncBytesReceived(bind(&WebSocket::OnDataRecieved, this, _1));
-                pSocket->BindErrorFunction(bind(&WebSocket::OnSocketError, this, _1));
-                pSocket->BindCloseFunction(bind(&WebSocket::OnSocketCloseing, this, _1));
+                pSocket->BindFuncBytesReceived(static_cast<function<void(TcpSocket*)>>(bind(&WebSocket::OnDataRecieved, this, _1)));
+                pSocket->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&WebSocket::OnSocketError, this, _1)));
+                pSocket->BindCloseFunction(static_cast<function<void(BaseSocket*)>>(bind(&WebSocket::OnSocketCloseing, this, _1)));
 
                 vCache.push_back(pSocket);
             }
@@ -311,12 +313,25 @@ private:
             if (spBuffer.get()[0] < 32 && bFirstCall == true) // 1. Byte < Ascii(32) && das erste mal aufgerufen wir gehen von einem SSl Client hello aus
             {
                 SslTcpSocket* pSslTcpSocket = new SslTcpSocket(pTcpSocket);
+                bool bCertError = false;
                 for (const auto& itParam : m_vHostParam)
                 {
                     if (itParam.second.m_strCAcertificate.empty() == false && itParam.second.m_strHostCertificate.empty() == false && itParam.second.m_strHostKey.empty() == false)
-                        pSslTcpSocket->AddServerCertificat(itParam.second.m_strCAcertificate.c_str(), itParam.second.m_strHostCertificate.c_str(), itParam.second.m_strHostKey.c_str(), itParam.second.m_strDhParam.c_str());
+                    {
+                        if (pSslTcpSocket->AddServerCertificat(itParam.second.m_strCAcertificate.c_str(), itParam.second.m_strHostCertificate.c_str(), itParam.second.m_strHostKey.c_str(), itParam.second.m_strDhParam.c_str()) == false)
+                        {
+                            bCertError = true;
+                            break;
+                        }
+                    }
                     if (itParam.second.m_strSslCipher.empty() == false)
-                        pSslTcpSocket->SetCipher(itParam.second.m_strSslCipher.c_str());
+                    {
+                        if (pSslTcpSocket->SetCipher(itParam.second.m_strSslCipher.c_str()) == false)
+                        {
+                            bCertError = true;
+                            break;
+                        }
+                    }
                 }
 
                 pSslTcpSocket->PutBackRead(spBuffer.get(), nRead);
@@ -326,6 +341,12 @@ private:
                 m_vConnections.erase(pTcpSocket);
                 m_mtxConnections.unlock();
                 pTcpSocket->SelfDestroy();
+
+                if (bCertError == true)
+                {
+                    pSslTcpSocket->Close();
+                    return;
+                }
 
                 pSslTcpSocket->SetAcceptState();
 
@@ -427,9 +448,9 @@ private:
                             if (find_if(begin(pConDetails->HeaderList), end(pConDetails->HeaderList), [&](auto pr) { return (pr.first == "sec-websocket-key") ? strWebSockKey = pr.second, true : false;  }) != end(pConDetails->HeaderList))
                             {
                                 SOCKETPARAM sp{ 0 };
-                                pTcpSocket->BindFuncBytesReceived(bind(&WebSocket::OnDataRecievedWebSocket, this, _1));
-                                pTcpSocket->BindErrorFunction(bind(&WebSocket::OnSocketErrorWebSocket, this, _1));
-                                pTcpSocket->BindCloseFunction(bind(&WebSocket::OnSocketCloseingWebSocket, this, _1));
+                                pTcpSocket->BindFuncBytesReceived(static_cast<function<void(TcpSocket*)>>(bind(&WebSocket::OnDataRecievedWebSocket, this, _1)));
+                                pTcpSocket->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&WebSocket::OnSocketErrorWebSocket, this, _1)));
+                                pTcpSocket->BindCloseFunction(static_cast<function<void(BaseSocket*)>>(bind(&WebSocket::OnSocketCloseingWebSocket, this, _1)));
                                 auto itPath = find_if(begin(pConDetails->HeaderList), end(pConDetails->HeaderList), [&](auto pr) { return (pr.first == ":path") ? true : false;  });
                                 if (itPath != end(pConDetails->HeaderList))
                                     sp.strPath = wstring(begin(itPath->second), end(itPath->second));
@@ -489,7 +510,7 @@ private:
     {
         //        MyTrace("Error: Network error ", pBaseSocket->GetErrorNo());
 
-        m_mtxConnections.lock();
+/*        m_mtxConnections.lock();
         auto item = m_vConnections.find(reinterpret_cast<TcpSocket*>(pBaseSocket));
         if (item != end(m_vConnections))
         {
@@ -497,7 +518,7 @@ private:
         else
             OutputDebugString(L"Socket nicht in ConectionList (2)\r\n");
         m_mtxConnections.unlock();
-
+*/
         pBaseSocket->Close();
     }
 

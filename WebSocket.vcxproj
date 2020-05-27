@@ -98,7 +98,7 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..;..\socketlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,7 +108,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;WEBSOCKET_EXPORTS;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..;../openssl-x64</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories></AdditionalIncludeDirectories>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -118,7 +118,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>..;..\socketlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -144,7 +144,7 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..;..\socketlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,7 +156,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;WEBSOCKET_EXPORTS;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..;../openssl-x64</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories></AdditionalIncludeDirectories>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -169,23 +169,23 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..;..\socketlib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ConfFile.h" />
-    <ClInclude Include="..\SvrLib\BaseSvr.h" />
-    <ClInclude Include="..\SvrLib\SvrCtrl.h" />
-    <ClInclude Include="..\Trace.h" />
+    <ClInclude Include="ConfFile.h" />
+    <ClInclude Include="SvrLib\BaseSvr.h" />
+    <ClInclude Include="SvrLib\SvrCtrl.h" />
+    <ClInclude Include="Trace.h" />
     <ClInclude Include="sha1.h" />
     <ClInclude Include="WebSocket.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\ConfFile.cpp" />
-    <ClCompile Include="..\SvrLib\BaseSvr.cpp" />
-    <ClCompile Include="..\SvrLib\SvrCtrl.cpp" />
-    <ClCompile Include="..\TempFile.cpp" />
-    <ClCompile Include="..\Trace.cpp" />
+    <ClCompile Include="ConfFile.cpp" />
+    <ClCompile Include="SvrLib\BaseSvr.cpp" />
+    <ClCompile Include="SvrLib\SvrCtrl.cpp" />
+    <ClCompile Include="TempFile.cpp" />
+    <ClCompile Include="Trace.cpp" />
     <ClCompile Include="sha1.cpp" />
     <ClCompile Include="WebSockServ.cpp" />
   </ItemGroup>
