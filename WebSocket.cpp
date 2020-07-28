@@ -673,6 +673,7 @@ void WebSocket::OnSocketCloseingWebSocket(BaseSocket* pBaseSocket)
     if (iter != end(SocketList))
     {
         SocketList.erase(iter);
+        Closeing(pBaseSocket);
     }
     mxList.unlock();
 }

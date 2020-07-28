@@ -66,6 +66,7 @@ public:
     HOSTPARAM& GetParameterBlockRef(const string& szHostName);
 
     virtual void Connected(const void* pId) { ; }
+    virtual void Closeing(const void* pId) { ; }
     virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) { ; }
     virtual void BinaryDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen, bool bIsLast) { ; }
     size_t WriteData(const void* pId, uint8_t* szData, uint32_t nDataLen);
