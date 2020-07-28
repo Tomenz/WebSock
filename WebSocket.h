@@ -58,13 +58,14 @@ public:
     WebSocket& operator=(const WebSocket&) = delete;
     WebSocket& operator=(WebSocket&& other) noexcept;
     virtual ~WebSocket();
-    bool Start();
-    bool Stop();
-    bool IsStopped() noexcept;
+    virtual bool Start();
+    virtual bool Stop();
+    virtual bool IsStopped() noexcept;
     const string& GetBindAdresse() const noexcept;
     short GetPort() const noexcept;
     HOSTPARAM& GetParameterBlockRef(const string& szHostName);
 
+    virtual void Connected(const void* pId) { ; }
     virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) { ; }
     virtual void BinaryDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen, bool bIsLast) { ; }
     size_t WriteData(const void* pId, uint8_t* szData, uint32_t nDataLen);

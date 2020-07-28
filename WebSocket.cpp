@@ -439,6 +439,8 @@ void WebSocket::OnDataRecieved(TcpSocket* const pTcpSocket)
                             pTcpSocket->Write(&strRespons[0], strRespons.size());
 
                             m_vConnections.erase(pTcpSocket);
+
+                            Connected(pTcpSocket);
                         }
                         else
                         {

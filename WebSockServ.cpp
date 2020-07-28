@@ -51,9 +51,13 @@ public:
     {
     }
 
-    virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) override
+    virtual void Connected(const void* pId) override
     {
         m_pSocket = pId;
+    }
+
+    virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) override
+    {
         WriteData(pId, szData, nDataLen);
     }
 
