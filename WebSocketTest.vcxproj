@@ -19,33 +19,33 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2F9592E1-34D7-4D03-9FA7-3B90E82D4924}</ProjectGuid>
+    <ProjectGuid>{68DA0016-9083-4D23-959A-3ABEE77AF0CC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>WebSocket</RootNamespace>
+    <RootNamespace>WebSocketTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -99,7 +99,8 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home);$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WebSocket.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -120,8 +121,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home);$(OutDir)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>WebSocket.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,7 +148,8 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home);$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WebSocket.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -172,14 +175,21 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <OutputFile>$(SolutionDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>socketlib;$(OpenSSL_Home);$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WebSocket.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConfFile.h" />
+    <ClInclude Include="SvrLib\BaseSvr.h" />
+    <ClInclude Include="SvrLib\SvrCtrl.h" />
     <ClInclude Include="WebSocket.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WebSocket.cpp" />
+    <ClCompile Include="ConfFile.cpp" />
+    <ClCompile Include="SvrLib\BaseSvr.cpp" />
+    <ClCompile Include="SvrLib\SvrCtrl.cpp" />
+    <ClCompile Include="WebSockServ.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,8 @@
 #include <signal.h>
 #include <codecvt>
 #include <fcntl.h>
+#include <regex>
+#include <deque>
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <conio.h>
@@ -41,6 +43,28 @@ public:
 #endif
 
 const static wregex s_rxSepComma(L"\\s*,\\s*");
+
+class WebSockHandler : public WebSocket
+{
+public:
+    WebSockHandler(const string& strBindIp = string("127.0.0.1"), short sPort = 9090) : WebSocket(strBindIp, sPort)
+    {
+    }
+
+    virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) override
+    {
+        m_pSocket = pId;
+        WriteData(pId, szData, nDataLen);
+    }
+
+    virtual void BinaryDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen, bool bLastPaket) override
+    {
+        OutputDebugString(wstring(L"Bytes received:" + to_wstring(nDataLen) + L"\r\n").c_str());
+    }
+
+private:
+    const void* m_pSocket;
+};
 
 class Service : public CBaseSrv
 {
@@ -192,7 +216,7 @@ private:
 private:
     static shared_ptr<Service> s_pInstance;
     wstring m_strModulePath;
-    deque<WebSocket> m_vServers;
+    deque<WebSockHandler> m_vServers;
     bool m_bStop;
     bool m_bIsStopped;
     mutex              m_mxStop;

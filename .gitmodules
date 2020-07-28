@@ -2,3 +2,9 @@
 	path = SocketLib
 	url = https://github.com/Tomenz/SocketLib
 	ignore = untracked
+[submodule "base64"]
+	path = base64
+	url = https://github.com/Tomenz/base64.git
+[submodule "sha1"]
+	path = sha1
+	url = https://github.com/vog/sha1.git
