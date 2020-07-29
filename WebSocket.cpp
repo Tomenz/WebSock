@@ -678,7 +678,7 @@ void WebSocket::OnSocketCloseingWebSocket(BaseSocket* pBaseSocket)
     mxList.unlock();
 }
 
-size_t WebSocket::WriteData(const void* pId, uint8_t* szData, uint32_t nDataLen)
+size_t WebSocket::WriteData(const void* pId, const uint8_t* szData, const uint32_t nDataLen)
 {
     uint32_t iHeaderLen = 2;
     if (nDataLen > 125)

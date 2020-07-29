@@ -69,7 +69,7 @@ public:
     virtual void Closeing(const void* pId) { ; }
     virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) { ; }
     virtual void BinaryDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen, bool bIsLast) { ; }
-    size_t WriteData(const void* pId, uint8_t* szData, uint32_t nDataLen);
+    size_t WriteData(const void* pId, const uint8_t* szData, const uint32_t nDataLen);
 
 private:
     void OnNewConnection(const vector<TcpSocket*>& vNewConnections);
