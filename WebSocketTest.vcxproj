@@ -184,11 +184,13 @@
     <ClInclude Include="SvrLib\BaseSvr.h" />
     <ClInclude Include="SvrLib\SvrCtrl.h" />
     <ClInclude Include="WebSocket.h" />
+    <ClInclude Include="WebSockHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfFile.cpp" />
     <ClCompile Include="SvrLib\BaseSvr.cpp" />
     <ClCompile Include="SvrLib\SvrCtrl.cpp" />
+    <ClCompile Include="WebSockHandler.cpp" />
     <ClCompile Include="WebSockServ.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
