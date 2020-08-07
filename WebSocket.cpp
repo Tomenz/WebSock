@@ -244,7 +244,7 @@ void WebSocket::OnDataRecieved(TcpSocket* const pTcpSocket)
         return;
     }
 
-    shared_ptr<char> spBuffer(new char[nAvalible]);
+    shared_ptr<char[]> spBuffer(new char[nAvalible]);
 
     uint32_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
 
@@ -490,7 +490,7 @@ void WebSocket::OnDataRecievedWebSocket(TcpSocket* pTcpSocket)
         return;
     }
 
-    shared_ptr<uint8_t> spBuffer(new uint8_t[nAvalible]);
+    shared_ptr<uint8_t[]> spBuffer(new uint8_t[nAvalible]);
 
     uint32_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
 
@@ -621,7 +621,7 @@ void WebSocket::OnDataRecievedWebSocket(TcpSocket* pTcpSocket)
                     sCode = ntohs(*(reinterpret_cast<short*>(szData)));
                 szData += 2;
 
-                shared_ptr<uint8_t> spOutput(new uint8_t[iter->second.nLen + 2]);
+                shared_ptr<uint8_t[]> spOutput(new uint8_t[iter->second.nLen + 2]);
 
                 HEADER* sHeader = reinterpret_cast<HEADER*>(spOutput.get());
                 *sHeader = { 0 };
@@ -686,7 +686,7 @@ size_t WebSocket::WriteData(const void* pId, const uint8_t* szData, const uint32
     if (nDataLen > 65535)
         iHeaderLen += 6;
 
-    unique_ptr<uint8_t> spOutput(new uint8_t[nDataLen + iHeaderLen]);
+    unique_ptr<uint8_t[]> spOutput(new uint8_t[nDataLen + iHeaderLen]);
     HEADER* sHeader = reinterpret_cast<HEADER*>(spOutput.get());
     *sHeader = { 0 };
     sHeader->FIN = 1;
