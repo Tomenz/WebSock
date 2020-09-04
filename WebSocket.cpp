@@ -694,7 +694,7 @@ size_t WebSocket::WriteData(const void* pId, const uint8_t* szData, const uint32
     sHeader->Mask = 0;
     sHeader->PLoad = (iHeaderLen > 2 ? (iHeaderLen == 10 ? 127 : 126) : nDataLen);
     if (iHeaderLen == 10)
-        *(reinterpret_cast<uint64_t*>(spOutput.get() + 2)) = htonll(nDataLen);
+        *(reinterpret_cast<uint64_t*>(spOutput.get() + 2)) = htonll(static_cast<uint64_t>(nDataLen));
     else if (iHeaderLen > 2)
         *(reinterpret_cast<short*>(spOutput.get() + 2)) = htons(static_cast<short>(nDataLen));
     copy(szData, szData + nDataLen, &spOutput.get()[iHeaderLen]);
