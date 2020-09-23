@@ -13,6 +13,7 @@ public:
     virtual void Closeing(const void* pId) override;
     virtual void TextDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen) override;
     virtual void BinaryDataRecieved(const void* pId, const wstring strPath, uint8_t* szData, uint32_t nDataLen, bool bLastPaket) override;
+    virtual void PongRecieved(const void* pId) override;
 
 private:
     vector<const void*> m_vSocket;

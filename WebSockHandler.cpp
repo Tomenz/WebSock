@@ -37,3 +37,11 @@ void WebSockHandler::BinaryDataRecieved(const void* pId, const wstring strPath, 
 {
     //OutputDebugString(wstring(L"Bytes received:" + to_wstring(nDataLen) + L"\r\n").c_str());
 }
+
+void WebSockHandler::PongRecieved(const void* pId)
+{
+#if defined(_WIN32) || defined(_WIN64)
+    //OutputDebugString(L"pong frame\r\n");
+#endif
+    //SendPing(pId);
+}

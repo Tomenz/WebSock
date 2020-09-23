@@ -646,9 +646,10 @@ void WebSocket::OnDataRecievedWebSocket(TcpSocket* pTcpSocket)
                 break;
 
             case 10:// pong
-#if defined(_WIN32) || defined(_WIN64)
-                //OutputDebugString(L"pong frame\r\n");
-#endif
+                mxList.unlock();
+                PongRecieved(pTcpSocket);
+                mxList.lock();
+
                 iter->second.nReceived = iter->second.nLen = 0;
                 break;
             }
@@ -703,5 +704,24 @@ size_t WebSocket::WriteData(const void* pId, const uint8_t* szData, const uint32
     auto iter = SocketList.find(reinterpret_cast<BaseSocket*>(const_cast<void*>(pId)));
     if (iter != end(SocketList))
         return reinterpret_cast<TcpSocket*>(iter->first)->Write(spOutput.get(), nDataLen + iHeaderLen);
+    return 0;
+}
+
+size_t WebSocket::SendPing(const void* pId)
+{
+    uint32_t iHeaderLen = 2;
+
+    unique_ptr<uint8_t[]> spOutput(new uint8_t[iHeaderLen]);
+    HEADER* sHeader = reinterpret_cast<HEADER*>(spOutput.get());
+    *sHeader = { 0 };
+    sHeader->FIN = 1;
+    sHeader->OpCode = 9;
+    sHeader->Mask = 0;
+    sHeader->PLoad = 0;
+
+    lock_guard<mutex> lock(mxList);
+    auto iter = SocketList.find(reinterpret_cast<BaseSocket*>(const_cast<void*>(pId)));
+    if (iter != end(SocketList))
+        return reinterpret_cast<TcpSocket*>(iter->first)->Write(spOutput.get(), iHeaderLen);
     return 0;
 }
