@@ -236,7 +236,7 @@ void WebSocket::OnNewConnection(const vector<TcpSocket*>& vNewConnections)
 
 void WebSocket::OnDataRecieved(TcpSocket* const pTcpSocket)
 {
-    uint32_t nAvalible = pTcpSocket->GetBytesAvailible();
+    size_t nAvalible = pTcpSocket->GetBytesAvailible();
 
     if (nAvalible == 0)
     {
@@ -246,7 +246,7 @@ void WebSocket::OnDataRecieved(TcpSocket* const pTcpSocket)
 
     shared_ptr<char[]> spBuffer(new char[nAvalible]);
 
-    uint32_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
+    size_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
 
     if (nRead > 0)
     {
@@ -482,7 +482,7 @@ void WebSocket::OnSocketCloseing(BaseSocket* const pBaseSocket)
 
 void WebSocket::OnDataRecievedWebSocket(TcpSocket* pTcpSocket)
 {
-    uint32_t nAvalible = pTcpSocket->GetBytesAvailible();
+    size_t nAvalible = pTcpSocket->GetBytesAvailible();
 
     if (nAvalible == 0)
     {
@@ -492,7 +492,7 @@ void WebSocket::OnDataRecievedWebSocket(TcpSocket* pTcpSocket)
 
     shared_ptr<uint8_t[]> spBuffer(new uint8_t[nAvalible]);
 
-    uint32_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
+    size_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
 
     if (nRead > 0)
     {
