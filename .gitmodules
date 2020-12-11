@@ -8,7 +8,7 @@
 [submodule "sha1"]
 	path = sha1
 	url = https://github.com/vog/sha1.git
-[submodule "SvrLib"]
-	path = SvrLib
+[submodule "SrvLib"]
+	path = SrvLib
 	url = https://github.com/Tomenz/SrvLib.git
 	branch = master
